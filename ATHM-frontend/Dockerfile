@@ -1,0 +1,21 @@
+# ATHM-frontend/Dockerfile
+
+# Stage 1: Build
+FROM node:18-alpine as build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Stage 2: Serve
+FROM node:18-alpine
+WORKDIR /app
+RUN npm install -g serve
+COPY --from=build /app/dist ./dist
+
+# Open port 5173
+EXPOSE 5173
+
+# Run 'serve' on port 5173
+CMD ["serve", "-s", "dist", "-l", "5173"]

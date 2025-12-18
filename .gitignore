@@ -1,0 +1,9 @@
+# Secrets
+.env
+
+# Dependencies (just in case)
+node_modules/
+
+# OS Junk files
+.DS_Store
+Thumbs.db

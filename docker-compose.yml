@@ -1,0 +1,24 @@
+services:
+  backend:
+    build: ./ATHM-backend
+    container_name: athm_backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - JWT_SECRET=supersecretkey123
+      - MONGO_URI=${MONGO_URI}
+    networks:
+      - app-network
+
+  frontend:
+    build: ./ATHM-frontend
+    container_name: athm_frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

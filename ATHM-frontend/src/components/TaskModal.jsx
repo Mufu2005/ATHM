@@ -1,76 +1,55 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { X } from "lucide-react";
-import api from "../api/axios";
-import toast from "react-hot-toast";
 
-const TaskModal = ({ onClose, onTaskAdded, subjects, taskToEdit = null }) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    subject: "",
-    dueDate: "",
-    priority: "Medium",
-  });
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (taskToEdit) {
-      setFormData({
-        title: taskToEdit.title,
-        description: taskToEdit.description || "",
-        subject: taskToEdit.subject?._id || taskToEdit.subject || "",
-        dueDate: taskToEdit.dueDate
-          ? new Date(taskToEdit.dueDate).toISOString().split("T")[0]
+const TaskModal = ({ onClose, onSubmit, subjects, initialData = null }) => {
+  const [formData, setFormData] = useState(() => {
+    if (initialData) {
+      return {
+        title: initialData.title || "",
+        description: initialData.description || "",
+        subject: initialData.subject?._id || initialData.subject || "",
+        dueDate: initialData.dueDate
+          ? new Date(initialData.dueDate).toISOString().split("T")[0]
           : "",
-        priority: taskToEdit.priority,
-      });
+        priority: initialData.priority || "Medium",
+      };
     }
-  }, [taskToEdit]);
+    return {
+      title: "",
+      description: "",
+      subject: "",
+      dueDate: "",
+      priority: "Medium",
+    };
+  });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-
-    try {
-      if (taskToEdit) {
-        await api.put(`/tasks/${taskToEdit._id}`, formData);
-        toast.success("Task updated successfully");
-      } else {
-        await api.post("/tasks", formData);
-        toast.success("Task added successfully");
-      }
-      onTaskAdded();
-      onClose();
-    } catch {
-      toast.error(taskToEdit ? "Failed to update task" : "Failed to add task");
-    } finally {
-      setLoading(false);
-    }
+    onSubmit(formData);
   };
 
   const inputClass =
-    "w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-slate-900 dark:text-slate-100 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors outline-none";
-  const labelClass =
-    "block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1";
+    "w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all outline-none";
+  const labelClass = "block text-sm font-semibold text-slate-700 mb-1.5";
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm transition-all animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-xl w-full max-w-md overflow-hidden transition-colors scale-100">
-        <div className="flex justify-between items-center p-4 border-b border-slate-100 dark:border-slate-700">
-          <h2 className="text-lg font-bold text-slate-800 dark:text-white">
-            {taskToEdit ? "Edit Task" : "New Task"}
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100">
+        <div className="flex justify-between items-center p-5 border-b border-slate-100">
+          <h2 className="text-xl font-bold text-slate-800">
+            {initialData ? "Edit Task" : "New Task"}
           </h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
+            className="p-1 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
           >
-            <X className="w-5 h-5" />
+            <X size={20} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div>
-            <label className={labelClass}>Title</label>
+            <label className={labelClass}>Task Title</label>
             <input
               autoFocus
               required
@@ -87,35 +66,49 @@ const TaskModal = ({ onClose, onTaskAdded, subjects, taskToEdit = null }) => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Subject</label>
-              <select
-                className={inputClass}
-                value={formData.subject}
-                onChange={(e) =>
-                  setFormData({ ...formData, subject: e.target.value })
-                }
-              >
-                <option value="">No Subject</option>
-                {subjects.map((sub) => (
-                  <option key={sub._id} value={sub._id}>
-                    {sub.name}
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <select
+                  className={`${inputClass} appearance-none`}
+                  value={formData.subject}
+                  onChange={(e) =>
+                    setFormData({ ...formData, subject: e.target.value })
+                  }
+                >
+                  <option value="">No Subject</option>
+                  {subjects.map((sub) => (
+                    <option key={sub._id} value={sub._id}>
+                      {sub.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                  <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                  </svg>
+                </div>
+              </div>
             </div>
 
             <div>
               <label className={labelClass}>Priority</label>
-              <select
-                className={inputClass}
-                value={formData.priority}
-                onChange={(e) =>
-                  setFormData({ ...formData, priority: e.target.value })
-                }
-              >
-                <option>Low</option>
-                <option>Medium</option>
-                <option>High</option>
-              </select>
+              <div className="relative">
+                <select
+                  className={`${inputClass} appearance-none`}
+                  value={formData.priority}
+                  onChange={(e) =>
+                    setFormData({ ...formData, priority: e.target.value })
+                  }
+                >
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-500">
+                  <svg className="h-4 w-4 fill-current" viewBox="0 0 20 20">
+                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -123,7 +116,7 @@ const TaskModal = ({ onClose, onTaskAdded, subjects, taskToEdit = null }) => {
             <label className={labelClass}>Due Date</label>
             <input
               type="date"
-              className={`${inputClass} dark:[color-scheme:dark]`}
+              className={`${inputClass} text-slate-600`}
               value={formData.dueDate}
               onChange={(e) =>
                 setFormData({ ...formData, dueDate: e.target.value })
@@ -131,16 +124,21 @@ const TaskModal = ({ onClose, onTaskAdded, subjects, taskToEdit = null }) => {
             />
           </div>
 
-          <button
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition-colors flex justify-center items-center shadow-sm disabled:opacity-70 mt-2"
-          >
-            {loading
-              ? "Saving..."
-              : taskToEdit
-              ? "Save Changes"
-              : "Create Task"}
-          </button>
+          <div className="pt-2 flex gap-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 bg-white border border-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl hover:bg-slate-50 transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2.5 rounded-xl transition shadow-sm"
+            >
+              {initialData ? "Save Changes" : "Create Task"}
+            </button>
+          </div>
         </form>
       </div>
     </div>

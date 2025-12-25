@@ -1,11 +1,28 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const habitSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-  title: { type: String, required: true },
-  streak: { type: Number, default: 0 },
-  lastCompletedDate: { type: Date },
-  history: [{ type: Date }],
-});
+const habitSchema = mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
+    title: {
+      type: String,
+      required: [true, 'Please add a habit title'],
+    },
+    streak: {
+      type: Number,
+      default: 0,
+    },
+    completedDates: {
+      type: [Date],
+      default: [],
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
-module.exports = mongoose.model("Habit", habitSchema);
+module.exports = mongoose.model('Habit', habitSchema);

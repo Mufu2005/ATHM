@@ -13,6 +13,9 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 
 app.use("/api/auth", require("./routes/authRoutes"));
+
+app.use("/api/classrooms", require("./routes/classroomRoutes"));
+
 app.use("/api/tasks", require("./routes/taskRoutes"));
 app.use("/api/habits", require("./routes/habitRoutes"));
 app.use("/api/subjects", require("./routes/subjectRoutes"));

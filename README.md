@@ -1,83 +1,90 @@
-# 🎓 Academic Task & Habit Manager (ATHM)
+# ATHM - Student & Teacher Collaboration Platform
 
-ATHM is a comprehensive productivity tool designed specifically for students to organize their academic life. It bridges the gap between assignment tracking and personal habit formation, providing a unified platform to manage deadlines and build positive routines.
+**ATHM** is a full-stack web application built with the MERN stack (MongoDB, Express, React, Node.js). It is designed to streamline academic management by connecting teachers and students. Teachers can create virtual classrooms and post assignments, while students can join classes, track their homework, and manage personal tasks in one unified dashboard.
+
+---
 
 ## 🚀 Key Features
 
-### 📝 Task Management
-* **Create, Read, Update, Delete (CRUD):** Full control over your academic tasks.
-* **Smart Filtering:** Filter tasks by status (Pending, Completed, Missed), Subject, or Priority.
-* **Priority System:** Visual indicators for High, Medium, and Low priority tasks.
-* **Deadline Tracking:** Automatic detection of overdue tasks.
+### 👨‍🏫 For Teachers
+* **Create Classrooms:** Easily create new classes with a name and subject.
+* **Generate Class Codes:** Auto-generated unique 6-character codes for students to join.
+* **Manage Students:** View enrolled students and remove them if necessary.
+* **Post Assignments:** Create assignments with descriptions, due dates, and priority levels.
+* **Track Progress:** See how many students have turned in assignments.
+* **Delete Classroom:** Delete an entire classroom and all associated data.
 
-### 🔥 Habit Tracker
-* **Streak System:** Builds consistency by tracking consecutive days of habit completion.
-* **Daily Check-ins:** Simple interface to mark habits as done for the day.
-* **Optimistic UI:** Instant visual feedback for smoother user experience.
+### 👨‍🎓 For Students
+* **Join Classrooms:** Enter a class code to instantly join a teacher's course.
+* **Unified Task List:** View personal tasks and school assignments in one place.
+* **Assignment Tracking:** Clearly see which class an assignment belongs to.
+* **Leave Classroom:** Leave a class when the semester is over.
+* **Task Management:** Create personal to-dos, mark them as complete, and filter by status (Pending, Overdue, Done).
 
-### 🎨 User Experience
-* **Dark Mode:** Fully responsive dark/light theme toggled via Context API.
-* **Responsive Design:** Optimized for both desktop and mobile devices using Tailwind CSS.
-* **Authentication:** Secure JWT-based Login and Registration system.
+### ⚙️ General Features
+* **Secure Authentication:** JWT-based login and registration system.
+* **Smart Filtering:** Filter tasks by "To-Do", "Overdue", or "Done".
+* **Sorting:** Sort tasks by Priority (High/Medium/Low) or Due Date.
+* **Subjects & Tagging:** Color-coded subjects to organize tasks visually.
+* **Responsive Design:** Fully responsive UI built with Tailwind CSS.
 
 ---
 
 ## 🛠️ Tech Stack
 
-This project is built using the **MERN Stack**:
+### **Frontend**
+* **React.js** (Vite)
+* **Tailwind CSS** (Styling)
+* **Lucide React** (Icons)
+* **Axios** (API Requests)
+* **React Hot Toast** (Notifications)
+* **React Router DOM** (Navigation)
 
-* **Frontend:**
-    * [React.js](https://reactjs.org/) - Component-based UI library
-    * [Vite](https://vitejs.dev/) - Next Generation Frontend Tooling
-    * [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-    * [Axios](https://axios-http.com/) - Promise based HTTP client
-
-* **Backend:**
-    * [Node.js](https://nodejs.org/) - JavaScript runtime environment
-    * [Express.js](https://expressjs.com/) - Fast, unopinionated web framework
-    * [Mongoose](https://mongoosejs.com/) - MongoDB object modeling tool
-
-* **Database:**
-    * [MongoDB](https://www.mongodb.com/) - NoSQL Database
+### **Backend**
+* **Node.js** & **Express.js** (Server)
+* **MongoDB** & **Mongoose** (Database)
+* **JWT (JSON Web Tokens)** (Authentication)
+* **Bcryptjs** (Password Hashing)
+* **Dotenv** (Environment Variables)
 
 ---
 
-## ⚙️ Installation & Setup
+## 📦 Installation & Setup
 
-Follow these steps to run the project locally on your machine.
+Follow these steps to run the project locally.
 
-### 1. Prerequisites
-Make sure you have **Node.js** installed on your computer.
-
-### 2. Clone the Repository
+### 1. Clone the Repository
 ```bash
-git clone https://github.com/Mufu2005/ATHM.git
+git clone [https://github.com/your-username/ATHM.git](https://github.com/your-username/ATHM.git)
 cd ATHM
 ```
 
-### 3. Setup the Backend (Server)
-Navigate to the server folder and install dependencies:
+### 2. Backend Setup
+Navigate to the backend folder and install dependencies.
 ```bash
-cd server
+cd backend
 npm install
 ```
 
-Create a `.env` file in the `server` folder and add your configuration:
+Create a `.env` file in the `backend` folder and add the following:
 ```env
+NODE_ENV=development
 PORT=5000
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret_key
+MONGO_URI=mongodb+srv://<your_username>:<your_password>@cluster0.xyz.mongodb.net/ATHM_DB?retryWrites=true&w=majority
+JWT_SECRET=your_super_secret_key_here
 ```
+*Note: Replace `MONGO_URI` with your actual MongoDB connection string.*
 
 Start the server:
 ```bash
-npm start
+node server.js
 ```
-*(The server will run on http://localhost:5000)*
+*(The server should run on http://localhost:5000)*
 
-### 4. Setup the Frontend (Client)
-Open a **new terminal**, navigate to the root folder (where the React app lives), and install dependencies:
+### 3. Frontend Setup
+Open a new terminal, navigate to the frontend folder, and install dependencies.
 ```bash
+cd frontend
 npm install
 ```
 
@@ -85,29 +92,71 @@ Start the React application:
 ```bash
 npm run dev
 ```
-*(The app will usually run on http://localhost:5173)*
+*(The app should run on http://localhost:5173)*
 
 ---
 
 ## 📂 Project Structure
 
-```bash
-ATHM/
-├── src/
-│   ├── components/    # Reusable UI components (Navbar, Modals, Cards)
-│   ├── context/       # Global State (Theme, Authentication)
-│   ├── pages/         # Full page views (Tasks, Habits, Login)
-│   ├── api/           # Axios configuration
-│   ├── App.jsx        # Main Router setup
-│   └── main.jsx       # Entry point
-├── server/
-│   ├── models/        # Database Schemas (User, Task, Habit)
-│   ├── routes/        # API Endpoints
-│   ├── controllers/   # Business Logic
-│   └── server.js      # Backend entry point
-└── README.md
 ```
+ATHM/
+├── backend/
+│   ├── config/         # Database connection logic
+│   ├── controllers/    # Logic for User, Classroom, and Task operations
+│   ├── middleware/     # Auth protection middleware
+│   ├── models/         # Mongoose schemas (User, Classroom, Task, Subject)
+│   ├── routes/         # API routes
+│   ├── .env            # Environment variables (Sensitive info)
+│   └── server.js       # Entry point
+│
+└── frontend/
+    ├── src/
+    │   ├── api/        # Axios configuration
+    │   ├── components/ # Reusable UI components (Modals, Cards)
+    │   ├── context/    # AuthContext for global state
+    │   ├── pages/      # Main pages (Login, Dashboard, Classroom, Tasks)
+    │   ├── App.jsx     # Main App component
+    │   └── main.jsx    # DOM Entry point
+    └── tailwind.config.js
+```
+
+---
+
+## 🔗 API Endpoints
+
+### **Users**
+* `POST /api/users` - Register a new user
+* `POST /api/users/login` - Login user
+* `GET /api/users/me` - Get current user data
+
+### **Classrooms**
+* `GET /api/classrooms` - Get all joined/created classrooms
+* `POST /api/classrooms` - Create a classroom (Teacher)
+* `POST /api/classrooms/join` - Join a classroom (Student)
+* `GET /api/classrooms/:id` - Get specific classroom details
+* `DELETE /api/classrooms/:id` - Delete classroom (Teacher)
+* `POST /api/classrooms/:id/leave` - Leave classroom (Student)
+
+### **Tasks**
+* `GET /api/tasks` - Get all tasks (Personal + Assignments)
+* `POST /api/tasks` - Create a task
+* `PUT /api/tasks/:id` - Update a task
+* `DELETE /api/tasks/:id` - Delete a task
+* `PATCH /api/tasks/:id/toggle` - Toggle completion status
+
+---
 
 ## 🛡️ License
 
-This project is created for educational purposes.
+This project is open-source and available for educational purposes.
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+1.  Fork the project
+2.  Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request

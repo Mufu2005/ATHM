@@ -1,9 +1,21 @@
-# Secrets
+# Dependencies
+node_modules/
+/backend/node_modules
+/frontend/node_modules
+/ATHM-backend/node_modules
+/ATHM-frontend/node_modules
+
+# Environment Variables (Keep secrets safe!)
 .env
 
-# Dependencies (just in case)
-node_modules/
+# Build Output
+dist/
+build/
 
-# OS Junk files
+# Logs
+npm-debug.log
+yarn-error.log
+
+# OS Files
 .DS_Store
 Thumbs.db

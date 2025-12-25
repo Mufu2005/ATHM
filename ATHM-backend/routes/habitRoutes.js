@@ -1,13 +1,17 @@
 const express = require("express");
+const router = express.Router();
 const {
   getHabits,
   createHabit,
-  completeHabit,
+  toggleHabit, 
+  deleteHabit,
 } = require("../controllers/habitController");
 const { protect } = require("../middleware/authMiddleware");
-const router = express.Router();
 
 router.route("/").get(protect, getHabits).post(protect, createHabit);
-router.route("/:id/complete").put(protect, completeHabit);
+
+router.route("/:id").delete(protect, deleteHabit);
+
+router.put("/:id/toggle", protect, toggleHabit);
 
 module.exports = router;

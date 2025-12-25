@@ -13,7 +13,7 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       await login(email, password);
-      navigate("/tasks");
+      navigate("/dashboard");
       toast.success("Welcome back!");
     } catch (error) {
       toast.error(error.response?.data?.message || "Login failed");

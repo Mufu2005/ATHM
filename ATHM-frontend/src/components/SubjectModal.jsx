@@ -1,105 +1,172 @@
 import { useState } from "react";
-import { X, Check } from "lucide-react";
+import { X, Trash2, Plus } from "lucide-react";
 import api from "../api/axios";
 import toast from "react-hot-toast";
+import DeleteConfirmModal from "./DeleteConfirmModal";
 
-const COLORS = [
-  "#ef4444", // Red
-  "#f97316", // Orange
-  "#f59e0b", // Amber
-  "#84cc16", // Lime
-  "#10b981", // Emerald
-  "#06b6d4", // Cyan
-  "#3b82f6", // Blue
-  "#8b5cf6", // Violet
-];
+const SubjectModal = ({ isOpen, onClose, subjects, setSubjects }) => {
+  const [newSubject, setNewSubject] = useState("");
+  const [selectedColor, setSelectedColor] = useState("#3B82F6");
+  const [subjectToDelete, setSubjectToDelete] = useState(null);
 
-const SubjectModal = ({ onClose, onSubjectAdded }) => {
-  const [name, setName] = useState("");
-  const [selectedColor, setSelectedColor] = useState(COLORS[0]);
-  const [loading, setLoading] = useState(false);
+  if (!isOpen) return null;
 
-  const handleSubmit = async (e) => {
+  const colors = [
+    "#EF4444",
+    "#F97316",
+    "#F59E0B",
+    "#10B981",
+    "#06B6D4",
+    "#3B82F6",
+    "#6366F1",
+    "#8B5CF6",
+    "#EC4899",
+    "#64748B",
+  ];
+
+  const handleAddSubject = async (e) => {
     e.preventDefault();
-    if (!name.trim()) return;
+    if (!newSubject.trim()) return;
 
-    setLoading(true);
     try {
-      await api.post("/subjects", { name, color: selectedColor });
-      toast.success("Subject added successfully");
-      onSubjectAdded();
-      onClose();
-    } catch {
+      const { data } = await api.post("/subjects", {
+        name: newSubject,
+        color: selectedColor,
+      });
+      setSubjects([...subjects, data]);
+      setNewSubject("");
+      toast.success("Subject added");
+    } catch (error) {
+      console.error(error);
       toast.error("Failed to add subject");
-    } finally {
-      setLoading(false);
+    }
+  };
+
+  const initiateDelete = (subject) => {
+    setSubjectToDelete(subject);
+  };
+
+  const confirmDeleteSubject = async () => {
+    if (!subjectToDelete) return;
+
+    try {
+      await api.delete(`/subjects/${subjectToDelete._id}`);
+      setSubjects(subjects.filter((s) => s._id !== subjectToDelete._id));
+      toast.success("Subject deleted");
+      setSubjectToDelete(null);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete subject");
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm transition-all">
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden animate-in fade-in zoom-in-95 duration-200 scale-100 transition-colors">
-        <div className="flex justify-between items-center p-5 border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-900/50">
-          <h2 className="text-lg font-semibold text-slate-800 dark:text-white">
-            Add New Subject
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition p-1 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-5 space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-              Subject Name
-            </label>
-            <input
-              autoFocus
-              type="text"
-              className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2.5 text-slate-700 dark:text-slate-100 shadow-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all outline-none"
-              placeholder="e.g., Data Structures"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+    <>
+      <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-40 backdrop-blur-sm animate-in fade-in duration-200">
+        <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden transform transition-all scale-100">
+          {/* Header */}
+          <div className="flex justify-between items-center p-5 border-b border-slate-100 bg-slate-50">
+            <h2 className="text-lg font-bold text-slate-800">
+              Manage Subjects
+            </h2>
+            <button
+              onClick={onClose}
+              className="p-1 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-200 transition"
+            >
+              <X size={20} />
+            </button>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
-              Color Tag
-            </label>
-            <div className="flex flex-wrap gap-3">
-              {COLORS.map((color) => (
+          <div className="p-6">
+            {/* Add Form */}
+            <form onSubmit={handleAddSubject} className="mb-8">
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Add New Subject
+              </label>
+              <div className="flex gap-2 mb-3">
+                <input
+                  type="text"
+                  value={newSubject}
+                  onChange={(e) => setNewSubject(e.target.value)}
+                  placeholder="Math, Science, etc."
+                  className="flex-1 border border-slate-300 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800"
+                />
                 <button
-                  key={color}
-                  type="button"
-                  onClick={() => setSelectedColor(color)}
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 hover:shadow-md ${
-                    selectedColor === color
-                      ? "ring-2 ring-offset-2 ring-slate-400 dark:ring-slate-500 scale-110 shadow-md"
-                      : "shadow-sm"
-                  }`}
-                  style={{ backgroundColor: color }}
+                  type="submit"
+                  disabled={!newSubject.trim()}
+                  className="bg-blue-600 hover:bg-blue-700 text-white p-2.5 rounded-xl transition shadow-sm disabled:opacity-50"
                 >
-                  {selectedColor === color && (
-                    <Check className="w-4 h-4 text-white drop-shadow-sm" />
-                  )}
+                  <Plus size={24} />
                 </button>
-              ))}
+              </div>
+
+              {/* Color Picker */}
+              <div className="flex gap-2 justify-between">
+                {colors.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => setSelectedColor(color)}
+                    className={`w-6 h-6 rounded-full transition-transform hover:scale-110 ${
+                      selectedColor === color
+                        ? "ring-2 ring-offset-2 ring-slate-400 scale-110"
+                        : ""
+                    }`}
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
+              </div>
+            </form>
+
+            {/* List */}
+            <div>
+              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
+                Existing Subjects
+              </h3>
+              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                {subjects.length === 0 ? (
+                  <p className="text-sm text-slate-400 text-center py-2">
+                    No subjects yet.
+                  </p>
+                ) : (
+                  subjects.map((subject) => (
+                    <div
+                      key={subject._id}
+                      className="flex items-center justify-between p-3 rounded-xl border border-slate-100 hover:bg-slate-50 transition"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: subject.color }}
+                        />
+                        <span className="font-medium text-slate-700">
+                          {subject.name}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => initiateDelete(subject)}
+                        className="text-slate-300 hover:text-red-500 transition"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           </div>
-
-          <button
-            disabled={loading || !name.trim()}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 rounded-lg transition-all flex justify-center items-center disabled:opacity-50 disabled:cursor-not-allowed shadow-sm active:scale-[0.98]"
-          >
-            {loading ? "Creating..." : "Create Subject"}
-          </button>
-        </form>
+        </div>
       </div>
-    </div>
+
+      <DeleteConfirmModal
+        isOpen={!!subjectToDelete}
+        onClose={() => setSubjectToDelete(null)}
+        onConfirm={confirmDeleteSubject}
+        title="Delete Subject"
+        message={`Are you sure you want to delete "${subjectToDelete?.name}"? Tasks associated with this subject will lose their tag.`}
+        confirmText="Delete"
+      />
+    </>
   );
 };
 

@@ -1,27 +1,41 @@
+/* 👇 1. Import the Inter font so it actually works */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 }
 
-body,
-#root {
-  min-height: 100vh;
+body {
   margin: 0;
   padding: 0;
+  min-height: 100vh;
+  width: 100%;
+  /* 👇 2. Match your app's theme (Slate-50) & default text color */
+  @apply bg-slate-50 text-slate-900; 
+}
+
+#root {
+  min-height: 100vh;
   width: 100%;
 }
 
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px; /* Added for horizontal scrollbars */
 }
+
 ::-webkit-scrollbar-track {
   @apply bg-transparent;
 }
+
 ::-webkit-scrollbar-thumb {
-  @apply bg-slate-300 dark:bg-slate-700 rounded-full;
+  /* Using Slate-300 to match your design system */
+  @apply bg-slate-300 rounded-full hover:bg-slate-400 transition-colors;
 }

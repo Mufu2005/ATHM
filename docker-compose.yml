@@ -8,8 +8,8 @@ services:
       - "5000:5000"
     environment:
       - PORT=5000
-      - MONGO_URI=mongodb+srv://abdulrafay:rafay@cluster0.wlcpcro.mongodb.net/ATHM_DB?retryWrites=true&w=majority
-      - JWT_SECRET=your_super_secret_key
+      - MONGO_URI=${MONGO_URI} 
+      - JWT_SECRET=${JWT_SECRET}
       - NODE_ENV=production
 
   client:
